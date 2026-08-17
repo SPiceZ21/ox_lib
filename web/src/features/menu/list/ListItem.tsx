@@ -15,13 +15,21 @@ interface Props {
 
 const useStyles = createStyles((theme, params: { iconColor?: string }) => ({
   buttonContainer: {
-    backgroundColor: theme.colors.dark[6],
-    borderRadius: theme.radius.md,
+    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`,
+    borderRadius: theme.radius.sm,
     padding: 2,
-    height: 60,
+    height: 52,
     scrollMargin: 8,
+    boxShadow: `inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.05)}`,
+    transition: 'background 120ms ease, box-shadow 120ms ease',
+    // Selected row: orange edge marker instead of a flat grey fill, so the
+    // cursor position is obvious at a glance.
     '&:focus': {
-      backgroundColor: theme.colors.dark[4],
+      background: `linear-gradient(90deg,
+        ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.22)},
+        ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.04)})`,
+      boxShadow: `inset 3px 0 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]},
+                  inset 0 0 0 1px ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.3)}`,
       outline: 'none',
     },
   },

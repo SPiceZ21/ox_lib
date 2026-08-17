@@ -28,8 +28,19 @@ const useStyles = createStyles((theme, params: { disabled?: boolean; readOnly?: 
     height: 'fit-content',
     width: '100%',
     padding: 10,
+    // Buttons in the theme are uppercase Panchang-adjacent; a context row is a
+    // sentence, so keep it readable and left-aligned.
+    textTransform: 'none',
+    fontWeight: 600,
+    fontSize: 13,
+    letterSpacing: 0,
+    borderRadius: theme.radius.xs,
+    transition: 'box-shadow 120ms ease, background-color 120ms ease',
     '&:hover': {
-      backgroundColor: params.readOnly ? theme.colors.dark[6] : undefined,
+      backgroundColor: params.readOnly ? theme.colors.dark[7] : theme.colors.dark[6],
+      boxShadow: params.readOnly
+        ? undefined
+        : `inset 3px 0 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]}`,
       cursor: params.readOnly ? 'unset' : 'pointer',
     },
     '&:active': {

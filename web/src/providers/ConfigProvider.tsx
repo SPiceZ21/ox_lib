@@ -16,7 +16,9 @@ const ConfigCtx = createContext<{ config: Config; setConfig: (config: Config) =>
 
 const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [config, setConfig] = useState<Config>({
-    primaryColor: 'blue',
+    // Matches the framework accent. This is spread OVER the theme in App.tsx, so
+    // leaving it as Mantine blue silently overrode primaryColor there.
+    primaryColor: 'spz',
     primaryShade: 6,
   });
 

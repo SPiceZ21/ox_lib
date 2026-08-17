@@ -6,17 +6,22 @@ const useStyles = createStyles((theme) => ({
     textAlign: 'center',
     borderTopLeftRadius: theme.radius.md,
     borderTopRightRadius: theme.radius.md,
-    backgroundColor: theme.colors.dark[6],
-    height: 60,
+    // Accent bar across the top edge — the house header treatment.
+    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[9]})`,
+    boxShadow: `inset 0 2px 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]},
+                inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.06)}`,
+    height: 52,
     width: 384,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
   heading: {
-    fontSize: 24,
+    fontFamily: 'Panchang, Inter, sans-serif',
+    fontSize: 17,
     textTransform: 'uppercase',
-    fontWeight: 500,
+    fontWeight: 800,
+    letterSpacing: '0.08em',
   },
 }));
 

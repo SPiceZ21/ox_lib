@@ -12,28 +12,35 @@ const useStyles = createStyles((theme) => ({
   container: {
     width: 300,
     height: 'fit-content',
-    backgroundColor: theme.colors.dark[6],
+    // Near-black surface with a vertical fall, matching the framework's HUD
+    // panels rather than Mantine's flat grey card.
+    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[9]})`,
     color: theme.colors.dark[0],
-    padding: 12,
+    padding: '11px 13px',
     borderRadius: theme.radius.sm,
-    fontFamily: 'Roboto',
-    boxShadow: theme.shadows.sm,
+    fontFamily: 'Inter, Roboto, sans-serif',
+    boxShadow: `inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.06)}, ${theme.shadows.sm}`,
   },
   title: {
-    fontWeight: 500,
+    // Panchang, uppercase: the house treatment for headings.
+    fontFamily: 'Panchang, Inter, sans-serif',
+    fontSize: 13,
+    fontWeight: 800,
+    letterSpacing: '0.04em',
+    textTransform: 'uppercase',
     lineHeight: 'normal',
   },
   description: {
     fontSize: 12,
-    color: theme.colors.dark[2],
-    fontFamily: 'Roboto',
-    lineHeight: 'normal',
+    color: theme.colors.dark[1],
+    fontFamily: 'Inter, Roboto, sans-serif',
+    lineHeight: 1.35,
   },
   descriptionOnly: {
-    fontSize: 14,
-    color: theme.colors.dark[2],
-    fontFamily: 'Roboto',
-    lineHeight: 'normal',
+    fontSize: 13,
+    color: theme.colors.dark[1],
+    fontFamily: 'Inter, Roboto, sans-serif',
+    lineHeight: 1.35,
   },
 }));
 

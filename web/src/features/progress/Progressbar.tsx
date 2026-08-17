@@ -8,9 +8,10 @@ import type { ProgressbarProps } from '../../typings';
 const useStyles = createStyles((theme) => ({
   container: {
     width: 350,
-    height: 45,
+    height: 42,
     borderRadius: theme.radius.sm,
-    backgroundColor: theme.colors.dark[5],
+    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[9]})`,
+    boxShadow: `inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.06)}, ${theme.shadows.sm}`,
     overflow: 'hidden',
   },
   wrapper: {
@@ -24,7 +25,11 @@ const useStyles = createStyles((theme) => ({
   },
   bar: {
     height: '100%',
-    backgroundColor: theme.colors[theme.primaryColor][theme.fn.primaryShade()],
+    // Bright leading edge so the fill reads as motion, not a static block.
+    background: `linear-gradient(90deg,
+      ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.75)},
+      ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]})`,
+    boxShadow: `0 0 10px ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.5)}`,
   },
   labelWrapper: {
     position: 'absolute',
@@ -40,9 +45,13 @@ const useStyles = createStyles((theme) => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    fontSize: 20,
-    color: theme.colors.gray[3],
-    textShadow: theme.shadows.sm,
+    fontFamily: 'Panchang, Inter, sans-serif',
+    fontSize: 15,
+    fontWeight: 800,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: '#fff',
+    textShadow: '0 1px 4px rgba(0, 0, 0, 0.85)',
   },
 }));
 

@@ -22,14 +22,18 @@ const useStyles = createStyles((theme, params: { position?: TextUiPosition }) =>
       params.position === 'left-center' ? 'flex-start' : 'center',
   },
   container: {
-    fontSize: 16,
-    padding: 12,
+    fontSize: 14,
+    fontWeight: 600,
+    padding: '10px 14px',
     margin: 8,
-    backgroundColor: theme.colors.dark[6],
+    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[9]})`,
     color: theme.colors.dark[0],
-    fontFamily: 'Roboto',
+    fontFamily: 'Inter, Roboto, sans-serif',
     borderRadius: theme.radius.sm,
-    boxShadow: theme.shadows.sm,
+    // Orange leading edge — the house marker for "this is actionable".
+    boxShadow: `inset 3px 0 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]},
+                inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.06)},
+                ${theme.shadows.sm}`,
   },
 }));
 

@@ -21,8 +21,10 @@ end
 
 RegisterNUICallback('getConfig', function(_, cb)
     cb({
-        primaryColor = GetConvar('ox:primaryColor', 'blue'),
-        primaryShade = GetConvarInt('ox:primaryShade', 8)
+        -- SPiceZ default accent. The convars still win, so a server can override
+        -- it without touching the fork.
+        primaryColor = GetConvar('ox:primaryColor', 'spz'),
+        primaryShade = GetConvarInt('ox:primaryShade', 6)
     })
 end)
 

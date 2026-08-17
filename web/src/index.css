@@ -1,3 +1,56 @@
+/* ── SPiceZ display face ─────────────────────────────────────────────────── */
+/* Panchang carries every heading and numeric readout across the framework UIs;
+   Roboto below stays as the body/mono fallback ox_lib ships with. */
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Extralight.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 200;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Light.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Regular.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Medium.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 500;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Semibold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Bold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+@font-face {
+  font-family: "Panchang";
+  src: url("/fonts/Panchang-Extrabold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 800;
+}
+
 /* Thin 100 */
 @font-face {
   font-family: 'Roboto';
@@ -333,13 +386,16 @@ code {
 }
 
 .toast-inform {
-  background-color: #2980b9;
+  background-color: #15171c;
+  box-shadow: inset 3px 0 0 #3d9bff;
 }
 
 .toast-success {
-  background-color: #27ae60;
+  background-color: #15171c;
+  box-shadow: inset 3px 0 0 #00ff9d;
 }
 
 .toast-error {
-  background-color: #c0392b;
+  background-color: #15171c;
+  box-shadow: inset 3px 0 0 #ff3d71;
 }
