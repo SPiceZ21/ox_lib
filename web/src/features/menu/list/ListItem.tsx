@@ -5,6 +5,7 @@ import type { MenuItem } from '../../../typings';
 import { isIconUrl } from '../../../utils/isIconUrl';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import LibIcon from '../../../components/LibIcon';
+import { RADIUS, slab, ring, title, accentOf } from '../../../theme/surface';
 
 interface Props {
   item: MenuItem;
@@ -15,21 +16,21 @@ interface Props {
 
 const useStyles = createStyles((theme, params: { iconColor?: string }) => ({
   buttonContainer: {
-    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[8]})`,
-    borderRadius: theme.radius.sm,
+    background: slab,
+    borderRadius: RADIUS,
     padding: 2,
-    height: 52,
+    height: 46,
     scrollMargin: 8,
-    boxShadow: `inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.05)}`,
-    transition: 'background 120ms ease, box-shadow 120ms ease',
+    boxShadow: ring('#ffffff', 0.05),
+    transition: 'background 130ms ease, box-shadow 130ms ease, transform 130ms ease',
     // Selected row: orange edge marker instead of a flat grey fill, so the
     // cursor position is obvious at a glance.
     '&:focus': {
       background: `linear-gradient(90deg,
-        ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.22)},
-        ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.04)})`,
-      boxShadow: `inset 3px 0 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]},
-                  inset 0 0 0 1px ${theme.fn.rgba(theme.colors[theme.primaryColor][theme.fn.primaryShade()], 0.3)}`,
+        ${theme.fn.rgba(accentOf(theme), 0.22)},
+        ${theme.fn.rgba(accentOf(theme), 0.04)})`,
+      boxShadow: ring(accentOf(theme), 0.32),
+      transform: 'translateX(2px)',
       outline: 'none',
     },
   },
@@ -52,9 +53,8 @@ const useStyles = createStyles((theme, params: { iconColor?: string }) => ({
     color: params.iconColor || theme.colors.dark[2],
   },
   label: {
-    color: theme.colors.dark[2],
-    textTransform: 'uppercase',
-    fontSize: 12,
+    ...title(12),
+    color: theme.colors.dark[1],
     verticalAlign: 'middle',
   },
   chevronIcon: {

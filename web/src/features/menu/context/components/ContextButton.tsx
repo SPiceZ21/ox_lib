@@ -6,6 +6,7 @@ import { isIconUrl } from '../../../../utils/isIconUrl';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import MarkdownComponents from '../../../../config/MarkdownComponents';
 import LibIcon from '../../../../components/LibIcon';
+import { RADIUS, slab, ring, accentOf } from '../../../../theme/surface';
 
 const openMenu = (id: string | undefined) => {
   fetchNui<ContextMenuProps>('openContext', { id: id, back: false });
@@ -34,13 +35,17 @@ const useStyles = createStyles((theme, params: { disabled?: boolean; readOnly?: 
     fontWeight: 600,
     fontSize: 13,
     letterSpacing: 0,
-    borderRadius: theme.radius.xs,
-    transition: 'box-shadow 120ms ease, background-color 120ms ease',
+    borderRadius: RADIUS,
+    background: slab,
+    boxShadow: ring('#ffffff', 0.05),
+    transition: 'box-shadow 130ms ease, transform 130ms ease',
+    // Hover lifts the row a hair and lights its leading edge — the same
+    // "this one is selected" language the list menu uses.
     '&:hover': {
-      backgroundColor: params.readOnly ? theme.colors.dark[7] : theme.colors.dark[6],
       boxShadow: params.readOnly
-        ? undefined
-        : `inset 3px 0 0 ${theme.colors[theme.primaryColor][theme.fn.primaryShade()]}`,
+        ? ring('#ffffff', 0.05)
+        : ring(accentOf(theme), 0.32),
+      transform: params.readOnly ? undefined : 'translateX(2px)',
       cursor: params.readOnly ? 'unset' : 'pointer',
     },
     '&:active': {

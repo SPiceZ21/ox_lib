@@ -1,3 +1,21 @@
+/* ── Quantico ────────────────────────────────────────────────────────────── */
+/* Squared techno face used for HUD labels and numeric readouts. SIL Open Font
+   License, self-hosted so the NUI never depends on a font CDN. */
+@font-face {
+  font-family: "Quantico";
+  src: url("/fonts/Quantico-Regular.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Quantico";
+  src: url("/fonts/Quantico-Bold.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
 /* ── SPiceZ display face ─────────────────────────────────────────────────── */
 /* Panchang carries every heading and numeric readout across the framework UIs;
    Roboto below stays as the body/mono fallback ox_lib ships with. */

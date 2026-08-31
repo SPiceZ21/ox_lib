@@ -8,6 +8,7 @@ import ReactMarkdown from 'react-markdown';
 import HeaderButton from './components/HeaderButton';
 import ScaleFade from '../../../transitions/ScaleFade';
 import MarkdownComponents from '../../../config/MarkdownComponents';
+import { RADIUS, slab, shadow, ring, title, accentOf } from '../../../theme/surface';
 
 const openMenu = (id: string | undefined) => {
   fetchNui<ContextMenuProps>('openContext', { id: id, back: true });
@@ -27,14 +28,17 @@ const useStyles = createStyles((theme) => ({
     marginBottom: 10,
     gap: 6,
   },
+  // Header slab — same surface as every other panel in the framework.
   titleContainer: {
-    borderRadius: 4,
+    borderRadius: RADIUS,
     flex: '1 85%',
-    backgroundColor: theme.colors.dark[6],
+    background: slab,
+    boxShadow: `${ring(accentOf(theme), 0.24)}, ${shadow}`,
   },
   titleText: {
-    color: theme.colors.dark[0],
-    padding: 6,
+    ...title(14),
+    color: '#fff',
+    padding: '9px 6px',
     textAlign: 'center',
   },
   buttonsContainer: {

@@ -7,11 +7,10 @@ import { useLocales } from '../../providers/LocaleProvider';
 import remarkGfm from 'remark-gfm';
 import type { AlertProps } from '../../typings';
 import MarkdownComponents from '../../config/MarkdownComponents';
+import { body } from '../../theme/surface';
 
-const useStyles = createStyles((theme) => ({
-  contentStack: {
-    color: theme.colors.dark[2],
-  },
+const useStyles = createStyles(() => ({
+  contentStack: body(12.5),
 }));
 
 const AlertDialog: React.FC = () => {

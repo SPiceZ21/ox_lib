@@ -1,87 +1,116 @@
 import { useNuiEvent } from '../../hooks/useNuiEvent';
 import { toast, Toaster } from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
-import { Box, Center, createStyles, Group, keyframes, RingProgress, Stack, Text, ThemeIcon } from '@mantine/core';
+import { Box, createStyles, Text } from '@mantine/core';
 import React, { useState } from 'react';
 import tinycolor from 'tinycolor2';
 import type { NotificationProps } from '../../typings';
 import MarkdownComponents from '../../config/MarkdownComponents';
 import LibIcon from '../../components/LibIcon';
+import { RADIUS, slab, shadow, title, body, kf } from '../../theme/surface';
 
-const useStyles = createStyles((theme) => ({
-  container: {
-    width: 300,
-    height: 'fit-content',
-    // Near-black surface with a vertical fall, matching the framework's HUD
-    // panels rather than Mantine's flat grey card.
-    background: `linear-gradient(180deg, ${theme.colors.dark[7]}, ${theme.colors.dark[9]})`,
-    color: theme.colors.dark[0],
-    padding: '11px 13px',
-    borderRadius: theme.radius.sm,
-    fontFamily: 'Inter, Roboto, sans-serif',
-    boxShadow: `inset 0 0 0 1px ${theme.fn.rgba('#ffffff', 0.06)}, ${theme.shadows.sm}`,
-  },
-  title: {
-    // Panchang, uppercase: the house treatment for headings.
-    fontFamily: 'Panchang, Inter, sans-serif',
-    fontSize: 13,
-    fontWeight: 800,
-    letterSpacing: '0.04em',
-    textTransform: 'uppercase',
-    lineHeight: 'normal',
-  },
-  description: {
-    fontSize: 12,
-    color: theme.colors.dark[1],
-    fontFamily: 'Inter, Roboto, sans-serif',
-    lineHeight: 1.35,
-  },
-  descriptionOnly: {
-    fontSize: 13,
-    color: theme.colors.dark[1],
-    fontFamily: 'Inter, Roboto, sans-serif',
-    lineHeight: 1.35,
-  },
-}));
+/*
+ * Notification card.
+ *
+ * Keeps prp-hud's structure — diamond severity badge, dark horizontal-falloff
+ * slab, severity carried by colour rather than by a coloured background — but
+ * on ROUNDED corners and in Panchang, the framework's own display face.
+ *
+ * Severity is carried by the BADGE alone. Earlier versions also drew edge lines
+ * — twin hairlines, then a leading rail, then an inner ring — and every one of
+ * them read as decoration stuck on the panel rather than as part of it. One
+ * coloured object, no trim.
+ *
+ * The diamond's own corners are rounded to match: a hard-cornered badge on a
+ * soft panel is the detail that gives the whole thing away.
+ *
+ * Slim by intent — 28px tall. These stack three or four deep during a race, so
+ * every row of height costs four rows of screen.
+ *
+ * Motion: the card slides in from whichever edge it lives on and settles with
+ * the spring damping sampled off prp-hud — overshoot, a smaller correction, then
+ * rest — so it decelerates like it has weight. The badge lands a beat later, the
+ * one deliberate stagger, which is what gives the card depth instead of it
+ * arriving as a single flat object.
+ */
 
-const createAnimation = (from: string, to: string, visible: boolean) => keyframes({
-  from: {
-    opacity: visible ? 0 : 1,
-    transform: `translate${from}`,
-  },
-  to: {
-    opacity: visible ? 1 : 0,
-    transform: `translate${to}`,
-  },
-});
+const BADGE_SQ = 30;   // badge size
+const BADGE_CX = 3;    // badge centre, px inside the panel left edge
 
-const getAnimation = (visible: boolean, position: string) => {
-  const animationOptions = visible ? '0.2s ease-out forwards' : '0.4s ease-in forwards'
-  let animation: { from: string; to: string };
-
-  if (visible) {
-    animation = position.includes('bottom') ? { from: 'Y(30px)', to: 'Y(0px)' } : { from: 'Y(-30px)', to:'Y(0px)' };
-  } else {
-    if (position.includes('right')) {
-      animation = { from: 'X(0px)', to: 'X(100%)' }
-    } else if (position.includes('left')) {
-      animation = { from: 'X(0px)', to: 'X(-100%)' };
-    } else if (position === 'top-center') {
-      animation = { from: 'Y(0px)', to: 'Y(-100%)' };
-    } else if (position === 'bottom-center') {
-      animation = { from: 'Y(0px)', to: 'Y(100%)' };
-    } else {
-      animation = { from: 'X(0px)', to: 'X(100%)' };
-    }
-  }
-
-  return `${createAnimation(animation.from, animation.to, visible)} ${animationOptions}`
+// Severity palette, carried over from the reference so a success here and a
+// success anywhere else in the framework are the same green.
+const SEVERITY: Record<string, string> = {
+  info: '#87BCE1',
+  error: '#E84B45',
+  success: '#B6EB9D',
+  warning: '#E8C547',
 };
 
-const durationCircle = keyframes({
-  '0%': { strokeDasharray: `0, ${15.1 * 2 * Math.PI}` },
-  '100%': { strokeDasharray: `${15.1 * 2 * Math.PI}, 0` },
-});
+const useStyles = createStyles((theme) => ({
+  item: {
+    position: 'relative',
+    isolation: 'isolate',
+    display: 'flex',
+    alignItems: 'center',
+    width: 'fit-content',
+    maxWidth: 360,
+    minHeight: 28,
+    padding: '3px 14px 3px 34px',
+    color: '#fff',
+  },
+  bg: {
+    position: 'absolute',
+    inset: 0,
+    zIndex: -1,
+    borderRadius: RADIUS,
+    background: slab,
+    transformOrigin: 'left center',
+    boxShadow: shadow,
+  },
+  // Diamond badge: rotated square with softened corners, riding ON TOP of the
+  // panel’s leading edge. The slab runs unbroken underneath it — an earlier
+  // version punched a matching hole through the panel, and at this badge size
+  // the bite took a visible chunk out of the card instead of reading as one
+  // object sitting on another.
+  diamond: {
+    position: 'absolute',
+    left: 0,
+    top: '50%',
+    width: BADGE_SQ,
+    height: BADGE_SQ,
+    borderRadius: 9,
+    // Reads BADGE_CX so the badge and the hole it sits in can never drift.
+    transform: `translate(calc(-50% + ${BADGE_CX}px), -50%) rotate(45deg)`,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, rgba(14,15,19,0.98), rgba(6,7,10,0.9))',
+  },
+  diamondGlyph: {
+    transform: 'rotate(-45deg)',
+    fontSize: 13,
+    lineHeight: 1,
+    display: 'flex',
+  },
+  title: {
+    ...title(10.5),
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  body: body(9.5),
+  // Remaining duration: rounded, inset to the panel's curve.
+  timer: {
+    position: 'absolute',
+    left: 7,
+    right: 7,
+    bottom: 2,
+    height: 2,
+    borderRadius: 99,
+    transformOrigin: 'left center',
+    zIndex: 1,
+  },
+}));
 
 const Notifications: React.FC = () => {
   const { classes } = useStyles();
@@ -93,12 +122,11 @@ const Notifications: React.FC = () => {
     const toastId = data.id?.toString();
     const duration = data.duration || 3000;
 
-    let iconColor: string;
     let position = data.position || 'top-right';
 
     data.showDuration = data.showDuration !== undefined ? data.showDuration : true;
 
-    if (toastId) setToastKey(prevKey => prevKey + 1);
+    if (toastId) setToastKey((prevKey) => prevKey + 1);
 
     // Backwards compat with old notifications
     switch (position) {
@@ -113,105 +141,95 @@ const Notifications: React.FC = () => {
     if (!data.icon) {
       switch (data.type) {
         case 'error':
-          data.icon = 'circle-xmark';
+          data.icon = 'xmark';
           break;
         case 'success':
-          data.icon = 'circle-check';
+          data.icon = 'check';
           break;
         case 'warning':
-          data.icon = 'circle-exclamation';
+          data.icon = 'exclamation';
           break;
         default:
-          data.icon = 'circle-info';
+          data.icon = 'info';
           break;
       }
     }
 
-    if (!data.iconColor) {
-      switch (data.type) {
-        case 'error':
-          iconColor = 'red.6';
-          break;
-        case 'success':
-          iconColor = 'teal.6';
-          break;
-        case 'warning':
-          iconColor = 'yellow.6';
-          break;
-        default:
-          iconColor = 'blue.6';
-          break;
-      }
-    } else {
-      iconColor = tinycolor(data.iconColor).toRgbString();
-    }
+    const sev = data.iconColor
+      ? tinycolor(data.iconColor).toRgbString()
+      : SEVERITY[data.type || 'info'] || SEVERITY.info;
+
+    /*
+     * Travel vector: a toast enters from the edge it lives on, so one on the
+     * right flies in from off-screen right and one pinned to the top drops from
+     * above. Entering from the wrong side reads as the card crossing the screen
+     * to get somewhere it was always going to sit.
+     *
+     * Handed to the keyframes as custom properties — see kf.slideSpringIn.
+     */
+    const TRAVEL = 44;
+    const slide = position.includes('right')
+      ? { x: TRAVEL, y: 0 }
+      : position.includes('left')
+      ? { x: -TRAVEL, y: 0 }
+      : position.startsWith('bottom')
+      ? { x: 0, y: TRAVEL }
+      : { x: 0, y: -TRAVEL };
 
     toast.custom(
       (t) => (
         <Box
+          className={classes.item}
+          style={{ ['--sx' as any]: `${slide.x}px`, ['--sy' as any]: `${slide.y}px` }}
           sx={{
-            animation: getAnimation(t.visible, position),
+            // Linear on purpose: the spring lives in the keyframe values, so a
+            // timing function on top would bend a curve that is already shaped.
+            animation: t.visible
+              ? `${kf.slideSpringIn} 620ms linear both`
+              : `${kf.slideSpringOut} 200ms ease-in both`,
             ...data.style,
           }}
-          className={`${classes.container}`}
         >
-          <Group noWrap spacing={12}>
-            {data.icon && (
-              <>
-                {data.showDuration ? (
-                  <RingProgress
-                    key={toastKey}
-                    size={38}
-                    thickness={2}
-                    sections={[{ value: 100, color: iconColor }]}
-                    style={{ alignSelf: !data.alignIcon || data.alignIcon === 'center' ? 'center' : 'start' }}
-                    styles={{
-                      root: {
-                        '> svg > circle:nth-of-type(2)': {
-                          animation: `${durationCircle} linear forwards reverse`,
-                          animationDuration: `${duration}ms`,
-                        },
-                        margin: -3,
-                      },
-                    }}
-                    label={
-                      <Center>
-                        <ThemeIcon
-                          color={iconColor}
-                          radius="xl"
-                          size={32}
-                          variant={tinycolor(iconColor).getAlpha() < 0 ? undefined : 'light'}
-                        >
-                          <LibIcon icon={data.icon} fixedWidth color={iconColor} animation={data.iconAnimation} />
-                        </ThemeIcon>
-                      </Center>
-                    }
-                  />
-                ) : (
-                  <ThemeIcon
-                    color={iconColor}
-                    radius="xl"
-                    size={32}
-                    variant={tinycolor(iconColor).getAlpha() < 0 ? undefined : 'light'}
-                    style={{ alignSelf: !data.alignIcon || data.alignIcon === 'center' ? 'center' : 'start' }}
-                  >
-                    <LibIcon icon={data.icon} fixedWidth color={iconColor} animation={data.iconAnimation} />
-                  </ThemeIcon>
-                )}
-              </>
+          <Box className={classes.bg} />
+
+          {data.icon && (
+            <Box
+              className={classes.diamond}
+              style={{ ['--bx' as any]: `calc(-50% + ${BADGE_CX}px)` }}
+              sx={{
+                boxShadow: `inset 0 0 0 1.5px ${sev}, 0 0 10px ${tinycolor(sev).setAlpha(0.35).toRgbString()}`,
+                // Lands a beat after the card so the two read as layered rather
+                // than as one flat object arriving.
+                animation: `${kf.badgeIn} 420ms 90ms linear both`,
+              }}
+            >
+              <Box className={classes.diamondGlyph}>
+                <LibIcon icon={data.icon} fixedWidth color={sev} animation={data.iconAnimation} fontSize={13} />
+              </Box>
+            </Box>
+          )}
+
+          <Box sx={{ minWidth: 0 }}>
+            {data.title && <Text className={classes.title}>{data.title}</Text>}
+            {data.description && (
+              <ReactMarkdown components={MarkdownComponents} className={`${classes.body} description`}>
+                {data.description}
+              </ReactMarkdown>
             )}
-            <Stack spacing={0}>
-              {data.title && <Text className={classes.title}>{data.title}</Text>}
-              {data.description && (
-                <ReactMarkdown
-                  components={MarkdownComponents}
-                  className={`${!data.title ? classes.descriptionOnly : classes.description} description`}
-                >
-                  {data.description}
-                </ReactMarkdown>
-              )}
-            </Stack>
-          </Group>
+          </Box>
+
+          {data.showDuration && (
+            <Box
+              key={toastKey}
+              className={classes.timer}
+              sx={{
+                backgroundColor: sev,
+                opacity: 0.65,
+                animation: `${kf.drainX} linear forwards`,
+                animationDuration: `${duration}ms`,
+              }}
+            />
+          )}
         </Box>
       ),
       {
@@ -222,7 +240,7 @@ const Notifications: React.FC = () => {
     );
   });
 
-  return <Toaster />;
+  return <Toaster containerStyle={{ zIndex: 20 }} gutter={6} />;
 };
 
 export default Notifications;

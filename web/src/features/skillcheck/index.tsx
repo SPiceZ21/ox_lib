@@ -4,6 +4,7 @@ import Indicator from './indicator';
 import { fetchNui } from '../../utils/fetchNui';
 import { Box, createStyles } from '@mantine/core';
 import type { GameDifficulty, SkillCheckProps } from '../../typings';
+import { RADIUS, slab, ring, DISPLAY, accentOf } from '../../theme/surface';
 
 export const circleCircumference = 2 * 50 * Math.PI;
 
@@ -27,7 +28,11 @@ const useStyles = createStyles((theme, params: { difficultyOffset: number }) => 
   },
   track: {
     fill: 'transparent',
-    stroke: theme.colors.dark[5],
+    // Dimmer than Mantine's mid-grey so the accent arc and the indicator carry
+    // the light — but not near-black: the player has to read the whole circle
+    // to judge where the indicator is heading, and dark[8] all but vanished
+    // against the game behind it.
+    stroke: theme.fn.rgba('#ffffff', 0.13),
     strokeWidth: 8,
     r: 50,
     cx: 250,
@@ -56,7 +61,9 @@ const useStyles = createStyles((theme, params: { difficultyOffset: number }) => 
     },
   },
   indicator: {
-    stroke: 'red',
+    // Was a raw `red`, which is not a colour used anywhere else in the
+    // framework. This is the error red from the shared severity palette.
+    stroke: '#E84B45',
     strokeWidth: 16,
     fill: 'transparent',
     r: 50,
@@ -71,25 +78,32 @@ const useStyles = createStyles((theme, params: { difficultyOffset: number }) => 
       strokeDashoffset: 2 * 65 * Math.PI - 5,
     },
   },
+  // The key you have to press, sitting in the middle of the ring. Styled as a
+  // keycap on the house surface rather than a flat grey square — it is the one
+  // thing in this widget the player has to read under time pressure.
   button: {
     position: 'absolute',
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: theme.colors.dark[5],
-    width: 25,
-    height: 25,
+    background: slab,
+    boxShadow: `${ring(accentOf(theme), 0.35)}, 0 4px 14px -6px rgba(0,0,0,0.9)`,
+    color: '#fff',
+    width: 30,
+    height: 30,
     textAlign: 'center',
-    borderRadius: 5,
-    fontSize: 16,
-    fontWeight: 500,
+    borderRadius: RADIUS,
+    fontFamily: DISPLAY,
+    fontSize: 15,
+    fontWeight: 700,
+    letterSpacing: '0.04em',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     '@media (min-height: 1440px)': {
-      width: 30,
-      height: 30,
-      fontSize: 22,
+      width: 36,
+      height: 36,
+      fontSize: 19,
     },
   },
 }));

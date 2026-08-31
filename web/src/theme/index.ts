@@ -1,4 +1,5 @@
 import { MantineThemeOverride, Tuple } from '@mantine/core';
+import { RADIUS, slabSolid, shadowLg, title, body, DISPLAY } from './surface';
 
 /*
  * SPiceZ-Core theme for ox_lib.
@@ -66,45 +67,62 @@ export const theme: MantineThemeOverride = {
 
   components: {
     Button: {
-      defaultProps: { radius: 'sm' },
-      styles: (t) => ({
+      defaultProps: { radius: RADIUS },
+      styles: () => ({
         root: {
           border: 'none',
+          borderRadius: RADIUS,
+          fontFamily: DISPLAY,
           fontWeight: 700,
-          letterSpacing: '0.02em',
+          letterSpacing: '0.05em',
           textTransform: 'uppercase',
           fontSize: 12,
-          transition: 'filter 120ms ease, background-color 120ms ease',
-          '&:hover': { filter: 'brightness(1.08)' },
+          transition: 'filter 130ms ease, transform 130ms ease',
+          '&:hover': { filter: 'brightness(1.1)' },
+          '&:active': { transform: 'translateY(1px)' },
         },
       }),
     },
 
+    // Every dialog in the framework is a Modal, so theming it here is what puts
+    // the input dialog, the alert dialog and anything added later on the same
+    // surface. The accent border is gone: an outlined panel reads as trim, and
+    // the surface language carries weight through fill and shadow instead.
     Modal: {
-      styles: (t) => ({
+      styles: () => ({
         modal: {
-          backgroundColor: t.colors.dark[8],
-          border: `1px solid ${t.fn.rgba(t.colors.spz[6], 0.28)}`,
-          boxShadow: t.shadows.lg,
+          borderRadius: RADIUS,
+          background: slabSolid,
+          border: 'none',
+          boxShadow: shadowLg,
         },
+        header: { marginBottom: 14 },
         title: {
-          fontFamily: 'Panchang, Inter, sans-serif',
-          fontWeight: 800,
-          letterSpacing: '0.03em',
-          textTransform: 'uppercase',
-          fontSize: 15,
+          ...title(15),
+          color: '#fff',
         },
-        overlay: { backgroundColor: 'rgba(0, 0, 0, 0.62)' },
+        body: body(12),
+        // Darker than Mantine's default: these sit over a live game, and a thin
+        // scrim leaves the dialog fighting whatever is moving behind it.
+        overlay: { backgroundColor: 'rgba(0, 0, 0, 0.72)' },
+        close: {
+          borderRadius: RADIUS,
+        },
       }),
     },
 
     Input: {
+      defaultProps: { radius: RADIUS },
       styles: (t) => ({
         input: {
-          backgroundColor: t.colors.dark[9],
-          border: `1px solid ${t.fn.rgba('#ffffff', 0.1)}`,
+          // Sunk into the panel rather than sitting on it — a field should read
+          // as a hole you type into, which is what separates it from a button.
+          backgroundColor: 'rgba(0, 0, 0, 0.45)',
+          borderColor: t.fn.rgba('#ffffff', 0.09),
+          borderRadius: RADIUS,
+          transition: 'border-color 130ms ease',
           '&:focus, &:focus-within': {
-            borderColor: t.fn.rgba(t.colors.spz[6], 0.6),
+            borderColor: t.fn.rgba(t.colors.spz[6], 0.7),
           },
         },
       }),

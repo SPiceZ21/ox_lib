@@ -1,17 +1,32 @@
 import React from 'react';
-import { Box, createStyles, Text } from '@mantine/core';
+import { Box, createStyles, keyframes, Text } from '@mantine/core';
 import { useNuiEvent } from '../../hooks/useNuiEvent';
 import { fetchNui } from '../../utils/fetchNui';
 import ScaleFade from '../../transitions/ScaleFade';
 import type { ProgressbarProps } from '../../typings';
 
 /*
- * SPiceZ progress bar — minimal.
+ * Progress bar — prp-hud language, rebuilt from measured geometry.
  *
- * No panel, no housing: just the label, the figure and a thin rule. Text shadows
- * carry legibility instead of a background, so the world stays visible during
- * long tasks and the bar reads as part of the HUD rather than a window over it.
+ * The reference bar is a 45° SKEWED parallelogram (transform matrix(1,0,-1,1))
+ * over a half-black track, with a Quantico header row — label left, percent
+ * right — and no housing panel at all: the world stays visible.
+ *
+ * Added motion (ours): a shine sweep looping along the fill while active, and
+ * a settle-in on the header. Fill width itself is a plain CSS animation, so a
+ * JS hitch can never stutter it.
  */
+
+const shine = keyframes({
+  '0%': { transform: 'translateX(-100%)' },
+  '60%': { transform: 'translateX(320%)' },
+  '100%': { transform: 'translateX(320%)' },
+});
+
+const headIn = keyframes({
+  from: { opacity: 0, transform: 'translateY(6px)' },
+  to: { opacity: 1, transform: 'translateY(0)' },
+});
 
 const useStyles = createStyles((theme) => {
   const accent = theme.colors[theme.primaryColor][theme.fn.primaryShade()];
@@ -27,14 +42,15 @@ const useStyles = createStyles((theme) => {
       position: 'absolute',
     },
     container: {
-      width: 380,
+      width: 340,
     },
     head: {
       display: 'flex',
       alignItems: 'baseline',
       justifyContent: 'space-between',
       gap: 14,
-      marginBottom: 8,
+      marginBottom: 7,
+      animation: `${headIn} 300ms cubic-bezier(0.16, 1, 0.3, 1) both`,
     },
     label: {
       flex: 1,
@@ -44,8 +60,8 @@ const useStyles = createStyles((theme) => {
       whiteSpace: 'nowrap',
       fontFamily: 'Panchang, Inter, sans-serif',
       fontSize: 13,
-      fontWeight: 800,
-      letterSpacing: '0.07em',
+      fontWeight: 700,
+      letterSpacing: '0.08em',
       textTransform: 'uppercase',
       color: '#fff',
       textShadow: '0 2px 6px rgba(0, 0, 0, 0.95)',
@@ -53,27 +69,43 @@ const useStyles = createStyles((theme) => {
     percent: {
       fontFamily: 'Panchang, Inter, sans-serif',
       fontSize: 13,
-      fontWeight: 800,
+      fontWeight: 700,
       lineHeight: 1,
       fontVariantNumeric: 'tabular-nums',
       color: accent,
       textShadow: '0 2px 6px rgba(0, 0, 0, 0.95)',
       flexShrink: 0,
     },
+    // Rounded rail. The reference skews this −45°; rounded corners and a skew
+    // fight each other (the radius shears into an ellipse), so the shape is a
+    // clean pill and the motion carries the energy instead.
     track: {
-      height: 3,
+      height: 6,
       borderRadius: 99,
-      backgroundColor: theme.fn.rgba('#ffffff', 0.16),
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
+      backgroundColor: 'rgba(0, 0, 0, 0.55)',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255,255,255,0.06)',
       overflow: 'hidden',
     },
     bar: {
+      position: 'relative',
       height: '100%',
       borderRadius: 99,
-      backgroundColor: accent,
-      boxShadow: `0 0 8px ${theme.fn.rgba(accent, 0.6)}`,
+      background: `linear-gradient(90deg, ${theme.fn.lighten(accent, 0.18)} 0%, ${accent} 100%)`,
+      boxShadow: `0 0 10px ${theme.fn.rgba(accent, 0.55)}`,
+      overflow: 'hidden',
       // Width is a plain CSS animation: smooth, and unaffected by JS hitching.
       animation: 'progress-bar linear',
+    },
+    // Light blade sweeping down the fill while the task runs.
+    sheen: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '34%',
+      height: '100%',
+      background:
+        'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 50%, rgba(255,255,255,0) 100%)',
+      animation: `${shine} 1.6s ease-in-out infinite`,
     },
   };
 });
@@ -131,7 +163,9 @@ const Progressbar: React.FC = () => {
                 setVisible(false);
               }}
               sx={{ animationDuration: `${duration}ms` }}
-            />
+            >
+              <Box className={classes.sheen} />
+            </Box>
           </Box>
         </Box>
       </ScaleFade>
