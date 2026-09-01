@@ -24,7 +24,7 @@ import { RADIUS, slab, shadow, title, accentOf, kf } from '../../theme/surface';
  * closes up rather than reserving space for nothing.
  */
 
-const BADGE_SQ = 30;
+const BADGE_SQ = 34;
 const BADGE_CX = 3;
 
 const useStyles = createStyles((theme, params: { position?: TextUiPosition; hasIcon: boolean }) => ({
@@ -47,8 +47,8 @@ const useStyles = createStyles((theme, params: { position?: TextUiPosition; hasI
     alignItems: 'center',
     width: 'fit-content',
     maxWidth: 420,
-    minHeight: 30,
-    padding: params.hasIcon ? '5px 16px 5px 34px' : '5px 16px',
+    minHeight: 36,
+    padding: params.hasIcon ? '7px 19px 7px 39px' : '7px 19px',
     margin: 8,
     color: '#fff',
   },
@@ -66,7 +66,7 @@ const useStyles = createStyles((theme, params: { position?: TextUiPosition; hasI
     top: '50%',
     width: BADGE_SQ,
     height: BADGE_SQ,
-    borderRadius: 9,
+    borderRadius: 10,
     transform: `translate(calc(-50% + ${BADGE_CX}px), -50%) rotate(45deg)`,
     display: 'flex',
     alignItems: 'center',
@@ -75,12 +75,12 @@ const useStyles = createStyles((theme, params: { position?: TextUiPosition; hasI
   },
   diamondGlyph: {
     transform: 'rotate(-45deg)',
-    fontSize: 13,
+    fontSize: 15,
     lineHeight: 1,
     display: 'flex',
   },
   text: {
-    ...title(11.5),
+    ...title(13),
     minWidth: 0,
   },
 }));
@@ -137,7 +137,7 @@ const TextUI: React.FC = () => {
               }}
             >
               <Box className={classes.diamondGlyph}>
-                <LibIcon icon={data.icon} fixedWidth color={badge} animation={data.iconAnimation} fontSize={13} />
+                <LibIcon icon={data.icon} fixedWidth color={badge} animation={data.iconAnimation} fontSize={15} />
               </Box>
             </Box>
           )}

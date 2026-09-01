@@ -24,7 +24,7 @@ import { RADIUS, slab, shadow, title, body, kf } from '../../theme/surface';
  * The diamond's own corners are rounded to match: a hard-cornered badge on a
  * soft panel is the detail that gives the whole thing away.
  *
- * Slim by intent — 28px tall. These stack three or four deep during a race, so
+ * Slim by intent — 34px tall. These stack three or four deep during a race, so
  * every row of height costs four rows of screen.
  *
  * Motion: the card slides in from whichever edge it lives on and settles with
@@ -34,7 +34,7 @@ import { RADIUS, slab, shadow, title, body, kf } from '../../theme/surface';
  * arriving as a single flat object.
  */
 
-const BADGE_SQ = 30;   // badge size
+const BADGE_SQ = 34;   // badge size
 const BADGE_CX = 3;    // badge centre, px inside the panel left edge
 
 // Severity palette, carried over from the reference so a success here and a
@@ -53,9 +53,9 @@ const useStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     width: 'fit-content',
-    maxWidth: 360,
-    minHeight: 28,
-    padding: '3px 14px 3px 34px',
+    maxWidth: 400,
+    minHeight: 34,
+    padding: '5px 17px 5px 39px',
     color: '#fff',
   },
   bg: {
@@ -78,7 +78,7 @@ const useStyles = createStyles((theme) => ({
     top: '50%',
     width: BADGE_SQ,
     height: BADGE_SQ,
-    borderRadius: 9,
+    borderRadius: 10,
     // Reads BADGE_CX so the badge and the hole it sits in can never drift.
     transform: `translate(calc(-50% + ${BADGE_CX}px), -50%) rotate(45deg)`,
     display: 'flex',
@@ -88,17 +88,17 @@ const useStyles = createStyles((theme) => ({
   },
   diamondGlyph: {
     transform: 'rotate(-45deg)',
-    fontSize: 13,
+    fontSize: 15,
     lineHeight: 1,
     display: 'flex',
   },
   title: {
-    ...title(10.5),
+    ...title(12),
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-  body: body(9.5),
+  body: body(11),
   // Remaining duration: rounded, inset to the panel's curve.
   timer: {
     position: 'absolute',
@@ -204,7 +204,7 @@ const Notifications: React.FC = () => {
               }}
             >
               <Box className={classes.diamondGlyph}>
-                <LibIcon icon={data.icon} fixedWidth color={sev} animation={data.iconAnimation} fontSize={13} />
+                <LibIcon icon={data.icon} fixedWidth color={sev} animation={data.iconAnimation} fontSize={15} />
               </Box>
             </Box>
           )}
