@@ -26,6 +26,7 @@
 ---@field sound? { bank?: string, set: string, name: string }
 
 local settings = require 'resource.settings'
+local SPZ_NOTIFY_POSITION = 'center-right'
 
 ---`client`
 ---@param data NotifyProps
@@ -34,7 +35,8 @@ function lib.notify(data)
     local sound = settings.notification_audio and data.sound
     local payload = table.clone(data)
     payload.sound = nil
-    payload.position = payload.position or settings.notification_position
+    -- SPZ: every toast, from every script, shows middle-right ('center-left' for the other side).
+    payload.position = SPZ_NOTIFY_POSITION
 
     SendNUIMessage({
         action = 'notify',
