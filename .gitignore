@@ -10,5 +10,7 @@ pnpm-debug.log*
 /package/**/*.d.ts
 
 /web/node_modules
-/web/build
+# web/build is COMMITTED: the txAdmin recipe clones this fork as-is (no build
+# step). Ignoring it meant each rebuild's new hashed bundle was left out while
+# the tracked index.html pointed at it, so fresh installs had no ox_lib UI.
 /package/dist
